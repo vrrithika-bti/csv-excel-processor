@@ -17,8 +17,6 @@ public class App {
         }
 
         System.out.println("CSV to Excel processor starting...");
-        System.out.println("Using admin password " + ReportConfig.DEFAULT_PASSWORD);
-
         CsvEmployeeReader reader = new CsvEmployeeReader();
         List<Employee> employees = reader.read(csvPath);
 
@@ -32,8 +30,12 @@ public class App {
         DatabaseHelper db = new DatabaseHelper();
         if (args.length > 2) {
             db.auditExport(args[2]);
-            Employee lookedUp = db.findEmployee(args.length > 3 ? args[3] : employees.get(0).empId);
-            System.out.println("Lookup result: " + lookedUp.name);
+            if (args.length > 3 && !employees.isEmpty()) {
+                Employee lookedUp = db.findEmployee(args[3]);
+                if (lookedUp != null) {
+                    System.out.println("Lookup result: " + lookedUp.name);
+                }
+            }
         }
 
         System.out.println("Processed " + rows.size() + " employees into " + excelPath);

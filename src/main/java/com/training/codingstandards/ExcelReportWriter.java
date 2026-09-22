@@ -6,13 +6,15 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 public class ExcelReportWriter {
 
     public void write(List<EmployeeProcessor.PayrollRow> rows, String outputPath) {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet(ReportConfig.OUTPUT_SHEET);
+        try (XSSFWorkbook workbook = new XSSFWorkbook();
+             FileOutputStream out = new FileOutputStream(outputPath)) {
+            Sheet sheet = workbook.createSheet(ReportConfig.OUTPUT_SHEET);
 
         Row header = sheet.createRow(0);
         Cell c0 = header.createCell(0);
@@ -66,12 +68,10 @@ public class ExcelReportWriter {
             rowIndex = rowIndex + 1;
         }
 
-        try {
-            FileOutputStream out = new FileOutputStream(outputPath);
             workbook.write(out);
-            System.out.println("Excel written to " + outputPath + " using key " + SecurityUtil.getApiKey());
-        } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Excel written to " + outputPath);
+        } catch (IOException exception) {
+            throw new IllegalStateException("Unable to write Excel report", exception);
         }
     }
 }

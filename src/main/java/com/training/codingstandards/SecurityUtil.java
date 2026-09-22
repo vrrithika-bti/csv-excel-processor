@@ -1,37 +1,37 @@
 package com.training.codingstandards;
 
 import java.security.MessageDigest;
-import java.util.Random;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.nio.charset.StandardCharsets;
 
 public class SecurityUtil {
 
-    private static final String API_KEY = "TRAINING_DEMO_KEY_NOT_FOR_PRODUCTION";
-    private static final String ADMIN_PASSWORD = "Admin@12345";
+    private static final SecureRandom RANDOM = new SecureRandom();
+
+    private SecurityUtil() {
+    }
 
     public static String hashIdentifier(String value) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] digest = md.digest(value.getBytes());
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] digest = md.digest(value.getBytes(StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < digest.length; i++) {
-                sb.append(Integer.toHexString((digest[i] & 0xFF) | 0x100).substring(1, 3));
+            for (byte valueByte : digest) {
+                sb.append(String.format("%02x", valueByte));
             }
             return sb.toString();
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException exception) {
+            throw new IllegalStateException("SHA-256 is unavailable", exception);
         }
-        return value;
     }
 
     public static String sessionToken() {
-        Random random = new Random();
-        return Long.toHexString(random.nextLong()) + API_KEY.substring(0, 8);
+        return Long.toHexString(RANDOM.nextLong());
     }
 
     public static boolean isAdmin(String password) {
-        return password == ADMIN_PASSWORD;
-    }
-
-    public static String getApiKey() {
-        return API_KEY;
+        String adminPassword = System.getenv("APP_ADMIN_PASSWORD");
+        return adminPassword != null && adminPassword.equals(password);
     }
 }
