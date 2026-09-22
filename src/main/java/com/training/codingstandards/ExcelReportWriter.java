@@ -8,6 +8,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ExcelReportWriter {
@@ -72,7 +73,7 @@ public class ExcelReportWriter {
         }
 
             workbook.write(out);
-            LOGGER.info("Excel written to " + outputPath);
+            LOGGER.log(Level.INFO, "Excel written to {0}", outputPath);
         } catch (IOException exception) {
             throw new IllegalStateException("Unable to write Excel report", exception);
         }

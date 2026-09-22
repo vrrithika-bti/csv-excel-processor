@@ -132,7 +132,7 @@ jobs:
             -Dsonar.login="${SONAR_LOGIN}"
             -Dsonar.projectKey=csv-excel-processor
             -Dsonar.projectName="CSV to Excel Processor (Coding Standards Demo)"
-            -Dsonar.coverage.exclusions=src/main/java/com/training/codingstandards/App.java,src/main/java/com/training/codingstandards/DatabaseHelper.java,src/main/java/com/training/codingstandards/ExcelReportWriter.java
+            -Dsonar.coverage.exclusions=**/App.java,**/DatabaseHelper.java,**/ExcelReportWriter.java
             -Dsonar.qualitygate.wait=true
             -Dsonar.qualitygate.timeout=300
           )

@@ -2,6 +2,7 @@ package com.training.codingstandards;
 
 import java.io.File;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class App {
@@ -36,11 +37,11 @@ public class App {
             if (args.length > 3 && !employees.isEmpty()) {
                 Employee lookedUp = db.findEmployee(args[3]);
                 if (lookedUp != null) {
-                    LOGGER.info("Lookup result: " + lookedUp.name);
+                    LOGGER.log(Level.INFO, "Lookup result: {0}", lookedUp.name);
                 }
             }
         }
 
-        LOGGER.info("Processed " + rows.size() + " employees into " + excelPath);
+        LOGGER.log(Level.INFO, "Processed {0} employees into {1}", new Object[]{rows.size(), excelPath});
     }
 }
