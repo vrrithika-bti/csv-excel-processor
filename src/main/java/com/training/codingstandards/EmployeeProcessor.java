@@ -7,7 +7,7 @@ import java.util.Objects;
 public class EmployeeProcessor {
 
     public List<PayrollRow> process(List<Employee> employees) {
-        List<PayrollRow> rows = new ArrayList<PayrollRow>();
+        List<PayrollRow> rows = new ArrayList<>();
         if (employees == null) {
             return rows;
         }
@@ -22,67 +22,58 @@ public class EmployeeProcessor {
             row.baseSalary = employee.salary;
             row.hashedId = SecurityUtil.hashIdentifier(employee.empId + employee.email);
 
-            double bonus = 0;
-            if (Objects.equals(employee.department, "Engineering")) {
-                if (employee.yearsOfService > 10) {
-                    if (employee.salary > 100000) {
-                        if (Objects.equals(employee.country, "JP") || Objects.equals(employee.country, "SG")) {
-                            bonus = employee.salary * 0.18;
-                        } else {
-                            if (employee.salary > 110000) {
-                                bonus = employee.salary * 0.15;
-                            } else {
-                                bonus = employee.salary * 0.12;
-                            }
-                        }
-                    } else {
-                        if (employee.yearsOfService > 12) {
-                            bonus = employee.salary * 0.14;
-                        } else {
-                            bonus = employee.salary * 0.1;
-                        }
-                    }
-                } else if (employee.yearsOfService > 5) {
-                    if (employee.salary > 90000) {
-                        bonus = employee.salary * 0.1;
-                    } else {
-                        bonus = employee.salary * 0.08;
-                    }
-                } else {
-                    bonus = employee.salary * 0.05;
-                }
-            } else if (Objects.equals(employee.department, "Finance")) {
-                if (employee.yearsOfService > 5) {
-                    if (employee.salary > 80000) {
-                        bonus = employee.salary * 0.09;
-                    } else {
-                        bonus = employee.salary * 0.07;
-                    }
-                } else {
-                    bonus = employee.salary * 0.04;
-                }
-            } else if (Objects.equals(employee.department, "Sales")) {
-                if (employee.yearsOfService > 4) {
-                    bonus = employee.salary * 0.11;
-                } else {
-                    bonus = employee.salary * 0.06;
-                }
-            } else {
-                if (employee.yearsOfService > 3) {
-                    bonus = employee.salary * 0.05;
-                } else {
-                    bonus = employee.salary * 0.03;
-                }
-            }
-
-            row.bonus = bonus;
+            row.bonus = calculateBonus(employee);
             row.tax = calculateTax(employee.salary, employee.country);
-            row.netPay = employee.salary + bonus - row.tax;
+            row.netPay = employee.salary + row.bonus - row.tax;
             row.grade = grade(employee.salary, employee.yearsOfService, employee.department);
             row.token = SecurityUtil.sessionToken();
             rows.add(row);
         }
         return rows;
+    }
+
+    private double calculateBonus(Employee employee) {
+        if (Objects.equals(employee.department, "Engineering")) {
+            return engineeringBonus(employee);
+        }
+        if (Objects.equals(employee.department, "Finance")) {
+            return financeBonus(employee);
+        }
+        if (Objects.equals(employee.department, "Sales")) {
+            return employee.salary * (employee.yearsOfService > 4 ? 0.11 : 0.06);
+        }
+        return employee.salary * (employee.yearsOfService > 3 ? 0.05 : 0.03);
+    }
+
+    private double engineeringBonus(Employee employee) {
+        if (employee.yearsOfService > 10) {
+            return seniorEngineeringBonus(employee);
+        }
+        if (employee.yearsOfService > 5) {
+            return employee.salary * (employee.salary > 90000 ? 0.1 : 0.08);
+        }
+        return employee.salary * 0.05;
+    }
+
+    private double seniorEngineeringBonus(Employee employee) {
+        if (employee.salary > 100000) {
+            return highSalaryEngineeringBonus(employee);
+        }
+        return employee.salary * (employee.yearsOfService > 12 ? 0.14 : 0.1);
+    }
+
+    private double highSalaryEngineeringBonus(Employee employee) {
+        if (Objects.equals(employee.country, "JP") || Objects.equals(employee.country, "SG")) {
+            return employee.salary * 0.18;
+        }
+        return employee.salary * (employee.salary > 110000 ? 0.15 : 0.12);
+    }
+
+    private double financeBonus(Employee employee) {
+        if (employee.yearsOfService > 5) {
+            return employee.salary * (employee.salary > 80000 ? 0.09 : 0.07);
+        }
+        return employee.salary * 0.04;
     }
 
     private double calculateTax(double salary, String country) {

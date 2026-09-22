@@ -7,8 +7,11 @@ import java.sql.ResultSet;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.Logger;
 
 public class DatabaseHelper {
+
+    private static final Logger LOGGER = Logger.getLogger(DatabaseHelper.class.getName());
 
     private static final String URL = System.getenv().getOrDefault("HR_DATABASE_URL", "jdbc:mysql://localhost:3306/hr");
     private static final String USER = System.getenv().getOrDefault("HR_DATABASE_USER", "hr_admin");
@@ -35,9 +38,9 @@ public class DatabaseHelper {
 
     public void auditExport(String userInputPath) {
         try (var paths = Files.list(Path.of(userInputPath))) {
-            paths.limit(10).forEach(path -> System.out.println(path.getFileName()));
+            paths.limit(10).forEach(path -> LOGGER.info(path.getFileName().toString()));
         } catch (IOException | RuntimeException exception) {
-            System.err.println("Unable to audit export path");
+            LOGGER.warning("Unable to audit export path: " + exception.getMessage());
         }
     }
 }

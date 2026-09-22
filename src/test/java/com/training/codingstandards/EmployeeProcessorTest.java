@@ -14,7 +14,7 @@ class EmployeeProcessorTest {
     @Test
     void processCreatesPayrollRowForEachEmployee() {
         Employee employee = new Employee("1001", "Asha Raman", "asha.raman@example.com",
-                "Engineering", 92000, 6, "IN", "lead.eng@example.com");
+            "Engineering", 92000, 6, "IN");
 
         EmployeeProcessor processor = new EmployeeProcessor();
         List<EmployeeProcessor.PayrollRow> rows = processor.process(Arrays.asList(employee));
@@ -29,7 +29,7 @@ class EmployeeProcessorTest {
     @Test
     void processHandlesNullAndDistinctStringValues() {
         Employee employee = new Employee(new String("1002"), "Ben Carter", "ben@example.com",
-                new String("Finance"), 75000, 2, new String("US"), "manager@example.com");
+            new String("Finance"), 75000, 2, new String("US"));
 
         EmployeeProcessor processor = new EmployeeProcessor();
 

@@ -15,22 +15,22 @@ import java.util.List;
 public class CsvEmployeeReader {
 
     public List<Employee> read(String csvPath) {
-        List<Employee> employees = new ArrayList<Employee>();
+        List<Employee> employees = new ArrayList<>();
         try (InputStream inputStream = openInputStream(csvPath);
              InputStreamReader inputReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
              CSVParser parser = CSVFormat.DEFAULT.builder().setHeader().setSkipHeaderRecord(true).build().parse(inputReader)) {
-            for (CSVRecord record : parser) {
+                for (CSVRecord employeeRecord : parser) {
                 Employee employee = new Employee(
-                        record.get("empId"),
-                        record.get("name"),
-                        record.get("email"),
-                        record.get("department"),
-                        Double.parseDouble(record.get("salary")),
-                        Integer.parseInt(record.get("yearsOfService")),
-                        record.get("country"),
-                        record.get("managerEmail"));
+                    employeeRecord.get("empId"),
+                    employeeRecord.get("name"),
+                    employeeRecord.get("email"),
+                    employeeRecord.get("department"),
+                    Double.parseDouble(employeeRecord.get("salary")),
+                    Integer.parseInt(employeeRecord.get("yearsOfService")),
+                    employeeRecord.get("country"));
+                employee.setManagerEmail(employeeRecord.get("managerEmail"));
                 employees.add(employee);
-                ReportConfig.CACHE.add(employee);
+                ReportConfig.cache(employee);
             }
         } catch (IOException | IllegalArgumentException exception) {
             throw new IllegalStateException("Unable to read employee CSV", exception);

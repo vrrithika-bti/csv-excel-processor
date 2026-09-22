@@ -23,7 +23,7 @@ public class Employee {
     }
 
     public Employee(String empId, String name, String email, String department, double salary,
-                    int yearsOfService, String country, String managerEmail) {
+                    int yearsOfService, String country) {
         this.empId = empId;
         this.name = name;
         this.email = email;
@@ -31,8 +31,11 @@ public class Employee {
         this.salary = salary;
         this.yearsOfService = yearsOfService;
         this.country = country;
-        this.managerEmail = managerEmail;
         this.lastProcessed = new Date();
+    }
+
+    void setManagerEmail(String managerEmail) {
+        this.managerEmail = managerEmail;
     }
 
     @Override
